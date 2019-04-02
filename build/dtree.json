@@ -1,0 +1,44 @@
+{
+    "/": {
+        "st_gid": 501,
+        "st_mode": 16895,
+        "st_nlink": 1,
+        "st_size": 1024,
+        "st_uid": 501
+    },
+    "/a": {
+        "st_gid": 501,
+        "st_mode": 16877,
+        "st_nlink": 1,
+        "st_size": 1024,
+        "st_uid": 501
+    },
+    "/a/a": {
+        "st_gid": 501,
+        "st_mode": 16877,
+        "st_nlink": 1,
+        "st_size": 1024,
+        "st_uid": 501
+    },
+    "/a/b": {
+        "st_gid": 501,
+        "st_mode": 16877,
+        "st_nlink": 1,
+        "st_size": 1024,
+        "st_uid": 501
+    },
+    "/b": {
+        "st_gid": 501,
+        "st_mode": 16877,
+        "st_nlink": 1,
+        "st_size": 1024,
+        "st_uid": 501
+    },
+    "/c": {
+        "st_gid": 501,
+        "st_mode": 16877,
+        "st_nlink": 1,
+        "st_size": 1024,
+        "st_uid": 501
+    }
+}
