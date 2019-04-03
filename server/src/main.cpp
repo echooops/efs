@@ -42,7 +42,7 @@ nlohmann::json rxc_getattr(const nlohmann::json &req)
     
     // nlohmann::json rep = { {"ret", -1},
     //                        {"stat", st} };
-    nlohmann::json rep = {{"ret", 0},
+    nlohmann::json rep = {{"ret", -1},
                           {"stat", st}};
 //    rep["ret"] = 0;
     if (global::o.find(path) != global::o.end()) {

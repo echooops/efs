@@ -24,7 +24,9 @@ include_directories (${LIBS_DIR}/nanomsg-1.1.5/src/)
 # 日志需要包含
 include_directories (${LIBS_DIR}/spdlog-1.3.1/include/)
 # osxfuse 头文件
-include_directories (/usr/local/include/osxfuse)
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin") # Linux 支持 libudev
+  include_directories (/usr/local/include/osxfuse)
+endif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 
 link_directories (/usr/local/lib)
 

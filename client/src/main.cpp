@@ -8,6 +8,7 @@
 #include <json/json.hpp>
 
 #include <fuse/fuse.h>
+
 #include <sys/xattr.h>
 
 #include <unistd.h>             // rmdir
@@ -178,54 +179,52 @@ int efs_chmod(const char *path, mode_t mode)
     return rep["ret"];
 }
 
-
-const struct fuse_operations fake_ops = {
-    .getattr = efs_getattr,
-    .readlink = nullptr,
-    .mknod = efs_mknod,
-    .unlink = nullptr,
-    .symlink = nullptr,
-    .rename = nullptr,
-    .link = nullptr,
-    .chmod = efs_chmod,
-    .chown = nullptr,
-    .truncate = nullptr,
-    .utime = nullptr,
-
-    .open = efs_open,
-    .read = efs_read,
-    .release = nullptr,
-    .write = efs_write,
-
-    .statfs = nullptr,
-    .flush = nullptr,
-    .fsync = nullptr,
-
-    .setxattr = nullptr,
-    .getxattr = nullptr,
-    .listxattr = nullptr,
-    .removexattr = nullptr,
-
-    .mkdir = efs_mkdir,
-    .rmdir = efs_rmdir,
-    .getdir = nullptr,
-    .opendir = efs_opendir,
-    .readdir = efs_readdir,
-    .releasedir = efs_releasedir,
-    .fsyncdir = nullptr,
-
-    .init = nullptr,
-    .destroy = nullptr,
-    .access = nullptr,
-    .create = nullptr,
-    .ftruncate = nullptr,
-    .fgetattr = nullptr,
-};
-
-
 int main(int argc, char *argv[])
 {
+    struct fuse_operations fake_ops;
+    memset(&fake_ops, 0, sizeof(struct fuse_operations));
 
+    fake_ops.getattr = efs_getattr;
+    fake_ops.readlink = nullptr;
+    fake_ops.mknod = efs_mknod;
+    fake_ops.unlink = nullptr;
+    fake_ops.symlink = nullptr;
+    fake_ops.rename = nullptr;
+    fake_ops.link = nullptr;
+    fake_ops.chmod = efs_chmod;
+    fake_ops.chown = nullptr;
+    fake_ops.truncate = nullptr;
+    fake_ops.utime = nullptr;
+
+    fake_ops.open = efs_open;
+    fake_ops.read = efs_read;
+    fake_ops.release = nullptr;
+    fake_ops.write = efs_write;
+
+    fake_ops.statfs = nullptr;
+    fake_ops.flush = nullptr;
+    fake_ops.fsync = nullptr;
+
+    fake_ops.setxattr = nullptr;
+    fake_ops.getxattr = nullptr;
+    fake_ops.listxattr = nullptr;
+    fake_ops.removexattr = nullptr;
+
+    fake_ops.mkdir = efs_mkdir;
+    fake_ops.rmdir = efs_rmdir;
+    fake_ops.getdir = nullptr;
+    fake_ops.opendir = efs_opendir;
+    fake_ops.readdir = efs_readdir;
+    fake_ops.releasedir = efs_releasedir;
+    fake_ops.fsyncdir = nullptr;
+
+    fake_ops.init = nullptr;
+    fake_ops.destroy = nullptr;
+    fake_ops.access = nullptr;
+    fake_ops.create = nullptr;
+    fake_ops.ftruncate = nullptr;
+    fake_ops.fgetattr = nullptr;
+ 
     if (!fuse_main(argc, argv, &fake_ops, nullptr)) {
         std::cout << "hello world!" << "\n";
     }
