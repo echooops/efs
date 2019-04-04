@@ -46,19 +46,16 @@ void from_json(const nlohmann::json& j, struct stat &stbuf) {
     j.at("st_blocks").get_to(stbuf.st_blocks);
 }
 
-struct node_t {
-    int mode_t;
-    int type;
-    std::string name;
-    std::string hash;
-    std::vector<struct node_t> subs;
-};
-
 nlohmann::json rxc_access(const nlohmann::json &req)
 {
-    nlohmann::json rep = {{"ret", 0}};
+    std::string path = req["args"]["path"];
 
-    return rep;
+    if (global::o.find(path) != global::o.end()) {
+        return {{"ret", 0}};
+    }
+    else {
+        return {{"ret", -1}};
+    }
 }
 
 nlohmann::json rxc_getattr(const nlohmann::json &req)

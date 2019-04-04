@@ -72,48 +72,53 @@ void from_json(const nlohmann::json& j, struct stat &stbuf) {
 
 int efs_access(const char *path, int mask)
 {
+    nlohmann::json req = { {"method", "access"},
+                           {"context", *fuse_get_context()},
+                           {"args", {{"path", path},
+                                     {"mask", mask}}}};
+
     try {
-        nlohmann::json req = { {"method", "access"},
-                               {"context", *fuse_get_context()},
-                               {"args", {{"path", path},
-                                         {"mask", mask}}}};
-        LDEBUG("efs_access {} ----------------------------------------- req \n{}", path, req.dump().c_str());
         auto rep = global::client.request(req);
-        LDEBUG("efs_access -------------------------------------------- rep \n{}", rep.dump().c_str());
+        LDEBUG("efs_access [{}]\nreq:{}\nrep:{}", path, req.dump().c_str(), rep.dump().c_str());
         return rep["ret"];
     } catch (std::exception &e) {
         LERROR("{}", e.what());
         return -1;
     }
-
 }
 #ifdef __APPLE__
 int efs_setxattr(const char *path, const char *name, const char *value, size_t size, int flags, uint32_t position)
 {
-    return -ENOTSUP;
+    return -ENOATTR;
 }
 int efs_getxattr(const char *path, const char *name, char *value, size_t size, uint32_t position)
 {
-    return -ENOTSUP;
+    nlohmann::json req = { {"method", "access"},
+                           {"context", *fuse_get_context()},
+                           {"args", {{"path", path},
+                                     {"name", name}}}};
+    LDEBUG("efs_getxattr {} ----------------------------------------- req \n{}", path, req.dump().c_str());   
+    return -ENOATTR;
 }
 #else /* !__APPLE__ */
 int efs_setxattr(const char *path, const char *name, const char *value, size_t size, int flags)
 {
-    return -ENOTSUP;
+    return -ENOATTR;
 }
 int efs_getxattr(const char *path, const char *name, char *value, size_t size)
 {
-    return -ENOTSUP;
+    return -ENOATTR;
 }
 #endif /* __APPLE__ */
 
 int efs_listxattr(const char *path, char *list, size_t size)
 {
-    return -ENOTSUP;
+    LDEBUG("efs_listxattr {} ----------------------------------------- req \n{}", path);   
+    return -ENOATTR;
 }
 int efs_removexattr(const char *path, const char *name)
 {
-    return -ENOTSUP;
+    return -ENOATTR;
 }
 
 
@@ -125,14 +130,13 @@ int efs_getattr(const char *path, struct stat *stbuf)
                            {"args", {{"path", path},
                                      {"stat", *stbuf}}}};
     try {
-        LDEBUG("efs_getattr {} ----------------------------------------- req \n{}", path, req.dump().c_str());
         auto rep = global::client.request(req);
-        LDEBUG("efs_getattr -------------------------------------------- rep \n{}", rep.dump().c_str());
+        LDEBUG("efs_getattr [{}]\nreq:{}\nrep:{}", path, req.dump().c_str(), rep.dump().c_str());
         *stbuf = rep["stat"];
         return rep["ret"];
     } catch (std::exception &e) {
         LERROR("{}", e.what());
-        return -1;
+        return -ENOENT;
     }
 }
 

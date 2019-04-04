@@ -22,6 +22,7 @@ namespace comm {
 
         nlohmann::json request (const nlohmann::json &req, int timeout = 3000)
         {
+            std::lock_guard<std::mutex> lock{ _lock }; 
             std::string sndbuf = std::move(req.dump());
             req_sock_.send (sndbuf.c_str(), sndbuf.size() + 1, 0);
             // 收取回复结果
@@ -33,6 +34,7 @@ namespace comm {
         }
     private:
         nn::socket req_sock_;
+        std::mutex _lock;                          // 同步
     };
 
 }  // comm
