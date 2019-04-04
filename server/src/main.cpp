@@ -6,6 +6,7 @@
 #include <log/logger.hpp>
 #include <comm/server.hpp>
 #include <json/json.hpp>
+#include <sys/types.h>
 #include <sys/stat.h>
 
 namespace global {
@@ -115,13 +116,13 @@ nlohmann::json rxc_mkdir(const nlohmann::json &req)
 
     struct stat st;
     memset(&st, 0, sizeof(struct stat));
+    st.st_mode = req["args"]["mode"];
+    st.st_mode |= S_IFDIR;
+    
+    st.st_gid = req["context"]["uid"];
+    st.st_uid = req["context"]["gid"];
 
     global::o[path]["stat"] = st;
-
-    nlohmann::json &j = global::o[path]["stat"];
-    j["st_mode"] = req["args"]["mode"];
-    j["st_uid"] = req["context"]["uid"];
-    j["st_gid"] = req["context"]["gid"];
 
     // 回写回去
     std::ofstream o("dtree.json");
@@ -148,13 +149,26 @@ nlohmann::json rxc_create(const nlohmann::json &req)
     struct stat st;
     memset(&st, 0, sizeof(struct stat));
 
+    st.st_mode = req["args"]["mode"];
+    st.st_gid = req["context"]["uid"];
+    st.st_uid = req["context"]["gid"];
+
     global::o[path]["stat"] = st;
 
-    nlohmann::json &j = global::o[path]["stat"];
-    j["st_mode"] = req["args"]["mode"];
-    j["st_uid"] = req["context"]["uid"];
-    j["st_gid"] = req["context"]["gid"];
+    // 回写回去
+    std::ofstream o("dtree.json");
+    o << std::setw(4) << global::o << std::endl;
 
+    return {{"ret", 0}};
+}
+
+nlohmann::json rxc_rename(const nlohmann::json &req)
+{
+    std::string oldpath = req["args"]["oldpath"];
+    std::string newpath = req["args"]["newpath"];
+
+    global::o[newpath] = global::o[oldpath];
+    global::o.erase(oldpath);
     // 回写回去
     std::ofstream o("dtree.json");
     o << std::setw(4) << global::o << std::endl;
@@ -189,6 +203,22 @@ nlohmann::json rxc_chmod(const nlohmann::json &req)
     return {{"ret", 0}};
 }
 
+nlohmann::json rxc_chown(const nlohmann::json &req)
+{
+    std::string path = req["args"]["path"];
+    uid_t uid = req["args"]["uid"];
+    gid_t gid = req["args"]["gid"];
+
+    if (uid > 0) global::o[path]["stat"]["st_uid"] = uid;
+    if (gid > 0) global::o[path]["stat"]["st_gid"] = gid;
+
+    // 回写回去
+    std::ofstream o("dtree.json");
+    o << std::setw(4) << global::o << std::endl;
+
+    return {{"ret", 0}};
+}
+
 void register_methods()
 {
     global::server.register_methods("access", rxc_access);
@@ -197,8 +227,10 @@ void register_methods()
     global::server.register_methods("mkdir", rxc_mkdir);
     global::server.register_methods("rmdir", rxc_rmdir);
     global::server.register_methods("create", rxc_create);
+    global::server.register_methods("rename", rxc_rename);
     global::server.register_methods("unlink", rxc_unlink);
     global::server.register_methods("chmod", rxc_chmod);
+    global::server.register_methods("chown", rxc_chown);
     global::server.start();
 }
 

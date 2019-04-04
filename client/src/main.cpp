@@ -89,7 +89,8 @@ int efs_access(const char *path, int mask)
 #ifdef __APPLE__
 int efs_setxattr(const char *path, const char *name, const char *value, size_t size, int flags, uint32_t position)
 {
-    return -ENOATTR;
+    LDEBUG("efs_setxattr {} ----------------------------------------- req \n", path);
+    return -ENOTSUP;
 }
 int efs_getxattr(const char *path, const char *name, char *value, size_t size, uint32_t position)
 {
@@ -97,28 +98,31 @@ int efs_getxattr(const char *path, const char *name, char *value, size_t size, u
                            {"context", *fuse_get_context()},
                            {"args", {{"path", path},
                                      {"name", name}}}};
-    LDEBUG("efs_getxattr {} ----------------------------------------- req \n{}", path, req.dump().c_str());   
-    return -ENOATTR;
+    LDEBUG("efs_getxattr {} ----------------------------------------- req \n{}", path, req.dump().c_str());
+    return -ENOTSUP;
 }
 #else /* !__APPLE__ */
 int efs_setxattr(const char *path, const char *name, const char *value, size_t size, int flags)
 {
-    return -ENOATTR;
+    LDEBUG("efs_setxattr {} ----------------------------------------- req \n", path);
+    return -ENOTSUP;
 }
 int efs_getxattr(const char *path, const char *name, char *value, size_t size)
 {
-    return -ENOATTR;
+    LDEBUG("efs_getxattr {} ----------------------------------------- req \n", path);
+    return -ENOTSUP;
 }
 #endif /* __APPLE__ */
 
 int efs_listxattr(const char *path, char *list, size_t size)
 {
-    LDEBUG("efs_listxattr {} ----------------------------------------- req \n{}", path);   
-    return -ENOATTR;
+    LDEBUG("efs_listxattr {} ----------------------------------------- req \n", path);   
+    return -ENOTSUP;
 }
 int efs_removexattr(const char *path, const char *name)
 {
-    return -ENOATTR;
+    LDEBUG("efs_removexattr {} ----------------------------------------- req \n", path);
+    return -ENOTSUP;
 }
 
 
@@ -309,6 +313,51 @@ int efs_create(const char *path, mode_t mode, struct fuse_file_info *fi)
     return rep["ret"];
 }
 
+int efs_symlink(const char *linkname, const char *path)
+{
+    LDEBUG("efs_symlink {} ----------------------------------------- req \n", path);
+    return 0;
+}
+int efs_rename(const char *oldpath, const char *newpath)
+{
+    nlohmann::json req = { {"method", "rename"},
+                           {"context", *fuse_get_context()},
+                           {"args", {{"oldpath", oldpath}, {"newpath", newpath}}}};
+    LDEBUG("efs_rename {} {} ----------------------------------------- req \n", oldpath, newpath);
+    auto rep = global::client.request(req);
+    
+    return rep["ret"];
+}
+int efs_link(const char *oldpath, const char *newpath)
+{
+    LDEBUG("efs_link {} {} ----------------------------------------- req \n", oldpath, newpath);
+    return 0;
+}
+int efs_chown(const char *path, uid_t uid, gid_t gid)
+{
+    nlohmann::json req = { {"method", "chown"},
+                           {"context", *fuse_get_context()},
+                           {"args", {{"path", path}, {"uid", uid}, {"gid", gid}}}};
+    LDEBUG("efs_chown {} ----------------------------------------- req \n", path);
+    auto rep = global::client.request(req);
+    return rep["ret"];
+}
+int efs_truncate(const char *path, off_t size)
+{
+    LDEBUG("efs_truncate {} ----------------------------------------- req \n", path);
+    return 0;
+}
+int efs_ftruncate(const char *path, off_t size, struct fuse_file_info *fi)
+{
+    LDEBUG("efs_ftruncate {} ----------------------------------------- req \n", path);
+    return 0;
+}
+int efs_fgetattr(const char *path, struct stat *buf, struct fuse_file_info *fi)
+{
+    LDEBUG("efs_fgetattr {} ----------------------------------------- req \n", path);
+    return 0;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -319,12 +368,12 @@ int main(int argc, char *argv[])
     fake_ops.readlink = efs_readlink;
     fake_ops.mknod = efs_mknod;
     fake_ops.unlink = efs_unlink;
-    fake_ops.symlink = nullptr;
-    fake_ops.rename = nullptr;
-    fake_ops.link = nullptr;
+    fake_ops.symlink = efs_symlink;
+    fake_ops.rename = efs_rename;
+    fake_ops.link = efs_link;
     fake_ops.chmod = efs_chmod;
-    fake_ops.chown = nullptr;
-    fake_ops.truncate = nullptr;
+    fake_ops.chown = efs_chown;
+    fake_ops.truncate = efs_truncate;
     fake_ops.utime = nullptr;
 
     fake_ops.open = efs_open;
@@ -353,8 +402,8 @@ int main(int argc, char *argv[])
     fake_ops.destroy = nullptr;
     fake_ops.access = efs_access;
     fake_ops.create = efs_create;
-    fake_ops.ftruncate = nullptr;
-    fake_ops.fgetattr = nullptr;
+    fake_ops.ftruncate = efs_ftruncate;
+    fake_ops.fgetattr = efs_fgetattr;
  
     if (!fuse_main(argc, argv, &fake_ops, nullptr)) {
         std::cout << "hello world!" << "\n";

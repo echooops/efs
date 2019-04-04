@@ -50,55 +50,89 @@
             "st_uid": 501
         }
     },
-    "/a/b": {
-        "stat": {
-            "st_atime": 1554276989,
-            "st_blksize": 4096,
-            "st_blocks": 0,
-            "st_ctime": 1554273451,
-            "st_dev": 16777220,
-            "st_gid": 20,
-            "st_ino": 8608974689,
-            "st_mode": 16877,
-            "st_mtime": 1554273451,
-            "st_nlink": 13,
-            "st_rdev": 0,
-            "st_size": 416,
-            "st_uid": 501
-        }
-    },
-    "/a/c": {
+    "/a/aa": {
         "stat": {
             "st_atime": 0,
             "st_blksize": 0,
             "st_blocks": 0,
             "st_ctime": 0,
             "st_dev": 0,
-            "st_gid": 20,
+            "st_gid": 1000,
             "st_ino": 0,
             "st_mode": 16877,
             "st_mtime": 0,
             "st_nlink": 0,
             "st_rdev": 0,
             "st_size": 0,
-            "st_uid": 501
+            "st_uid": 1000
         }
     },
-    "/a/d": {
+    "/a/ddd": {
         "stat": {
             "st_atime": 0,
             "st_blksize": 0,
             "st_blocks": 0,
             "st_ctime": 0,
             "st_dev": 0,
-            "st_gid": 20,
+            "st_gid": 1000,
             "st_ino": 0,
             "st_mode": 16877,
             "st_mtime": 0,
             "st_nlink": 0,
             "st_rdev": 0,
             "st_size": 0,
-            "st_uid": 501
+            "st_uid": 1000
+        }
+    },
+    "/a/e": {
+        "stat": {
+            "st_atime": 0,
+            "st_blksize": 0,
+            "st_blocks": 0,
+            "st_ctime": 0,
+            "st_dev": 0,
+            "st_gid": 1000,
+            "st_ino": 0,
+            "st_mode": 16877,
+            "st_mtime": 0,
+            "st_nlink": 0,
+            "st_rdev": 0,
+            "st_size": 0,
+            "st_uid": 1000
+        }
+    },
+    "/a/f": {
+        "stat": {
+            "st_atime": 0,
+            "st_blksize": 0,
+            "st_blocks": 0,
+            "st_ctime": 0,
+            "st_dev": 0,
+            "st_gid": 1000,
+            "st_ino": 0,
+            "st_mode": 16877,
+            "st_mtime": 0,
+            "st_nlink": 0,
+            "st_rdev": 0,
+            "st_size": 0,
+            "st_uid": 1000
+        }
+    },
+    "/a/g": {
+        "stat": {
+            "st_atime": 0,
+            "st_blksize": 0,
+            "st_blocks": 0,
+            "st_ctime": 0,
+            "st_dev": 0,
+            "st_gid": 1000,
+            "st_ino": 0,
+            "st_mode": 16877,
+            "st_mtime": 0,
+            "st_nlink": 0,
+            "st_rdev": 0,
+            "st_size": 0,
+            "st_uid": 1000
         }
     },
     "/aaaa": {
@@ -116,6 +150,23 @@
             "st_rdev": 0,
             "st_size": 0,
             "st_uid": 501
+        }
+    },
+    "/ccc": {
+        "stat": {
+            "st_atime": 0,
+            "st_blksize": 0,
+            "st_blocks": 0,
+            "st_ctime": 0,
+            "st_dev": 0,
+            "st_gid": 0,
+            "st_ino": 0,
+            "st_mode": 16877,
+            "st_mtime": 0,
+            "st_nlink": 0,
+            "st_rdev": 0,
+            "st_size": 0,
+            "st_uid": 4294967295
         }
     },
     "/wo": {
